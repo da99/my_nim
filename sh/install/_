@@ -1,0 +1,21 @@
+#!/usr/bin/env zsh
+#
+# === {{CMD}}
+#
+set -u -e -o pipefail
+
+local +x ORIGINAL_ARGS="$@"
+
+case "$(echo $@ | xargs echo -n)" in
+
+  "")
+    sh_color GREEN "=== {{DONE}}: installing my_nim"
+    ;;
+
+  *)
+    echo "!!! Unknown arguments: $@" >&2
+    exit 1
+    ;;
+
+esac
+
