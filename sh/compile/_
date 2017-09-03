@@ -1,0 +1,27 @@
+#!/usr/bin/env zsh
+#
+# === {{CMD}} dev|prod ... more args ...
+#
+set -u -e -o pipefail
+
+local +x ORIGINAL_ARGS="$@"
+local +x release_type=$1; shift
+
+case "$release_type" in
+
+  dev)
+    nim compile "$@"
+    ;;
+
+  prod)
+    rm -rf nimcache/
+    nim compile --define:release --fieldChecks:on --rangeChecks:on --boundChecks:on --overflowChecks:on "$@"
+    ;;
+
+  *)
+    echo "!!! Unknown arguments: $ORIGINAL_ARGS" >&2
+    exit 1
+    ;;
+
+esac
+

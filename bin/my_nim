@@ -36,8 +36,7 @@ case $ACTION in
     fi
 
     # === It's an error:
-    echo "!!! Unknown action: $ACTION" 1>&2
-    exit 1
+    nim $ACTION "$@"
     ;;
 
 esac
