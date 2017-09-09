@@ -1,0 +1,32 @@
+#!/usr/bin/env zsh
+#
+# === {{CMD}}
+#
+set -u -e -o pipefail
+
+local +x ORIGINAL_ARGS="$@"
+local +x ACTION="$@"
+local +x nimcache="$THIS_DIR/tmp/nimcache"
+
+cd "$THIS_DIR"
+case "$ACTION" in
+
+  "")
+    mkdir -p tmp/scratch
+    nvim tmp/scratch/scratch.nim
+    ;;
+
+  run)
+    nim compile --cc:clang --out:tmp/scratch.run --nimcache:"$nimcache" tmp/scratch/scratch.nim
+    sh_color GREEN "BOLD{{=============================================================================}}"
+    tmp/scratch.run
+    sh_color GREEN "BOLD{{===}} BOLD{{$(date +"%I:%M:%S")}} GREEN{{================================================================}}"
+    ;;
+
+  *)
+    echo "!!! Unknown arguments: $ORIGINAL_ARGS" >&2
+    exit 1
+    ;;
+
+esac
+
