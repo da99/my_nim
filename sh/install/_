@@ -1,6 +1,7 @@
 #!/usr/bin/env zsh
 #
 # === {{CMD}}
+# === {{CMD}} --compiled
 #
 set -u -e -o pipefail
 
@@ -9,7 +10,21 @@ local +x ORIGINAL_ARGS="$@"
 case "$(echo $@ | xargs echo -n)" in
 
   "")
+    my os package --install nim
     sh_color GREEN "=== {{DONE}}: installing my_nim"
+    ;;
+
+  compiled)
+    local +x os="$(uname -smo)"
+    case "$os" in
+      "Linux x86_64 GNU/Linux")
+        echo "installing"
+        ;;
+      *)
+        echo "!!! Unknown OS: $os" >&2
+        exit 5
+        ;;
+    esac
     ;;
 
   *)
