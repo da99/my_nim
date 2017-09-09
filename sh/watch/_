@@ -1,0 +1,11 @@
+#!/usr/bin/env zsh
+#
+# === {{CMD}}
+#
+set -u -e -o pipefail
+
+local +x ORIGINAL_ARGS="$@"
+
+cd "$THIS_DIR"
+process watch "-r tmp/scratch" "my_nim scratch run"
+
