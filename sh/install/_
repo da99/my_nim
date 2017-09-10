@@ -14,12 +14,49 @@ case "$(echo $@ | xargs echo -n)" in
     sh_color GREEN "=== {{DONE}}: installing my_nim"
     ;;
 
-  compiled)
+  --compiled)
     local +x os="$(uname -smo)"
     case "$os" in
       "Linux x86_64 GNU/Linux")
-        echo "installing"
+        cd "$THIS_DIR"
+        mkdir -p tmp
+        cd tmp
+        set $(lynx --dump "https://nim-lang.org/install_unix.html" | grep tar.xz | tr -s ' ' | cut -d' ' -f3)
+        local +x URL=$1
+        local +x SHA_URL=$2
+        local +x FILE_NAME="$(basename "$URL")"
+        local +x SHA_FILE_NAME="$(basename "$SHA_URL")"
+
+        if [[ ! -f "$FILE_NAME" ]]; then
+          wget "$URL"
+        fi
+
+        echo "=== Checking downloaded file..." >&2
+        rm -f "$SHA_FILE_NAME"
+        wget -q "$SHA_URL"
+        sha256sum "$FILE_NAME"
+
+        local +x nim_dir=$(basename $FILE_NAME .tar.xz)
+        if [[ ! -d "$nim_dir" ]]; then
+          echo "=== Uncompressing archive..." >&2
+          tar xf $FILE_NAME
+        fi
+
+        cd $nim_dir
+        local +x full_nim_dir="$PWD"
+
+        if [[ ! -x "bin/nim" ]]; then
+          echo "=== Building nim..." >&2
+          sh build.sh
+          bin/nim c koch
+          ./koch tools
+        fi
+
+        cd "$THIS_DIR"
+        sh_color GREEN "=== Installed: $nim_dir" >&2
+        sh_color GREEN "=== PATH: $full_nim_dir/bin" >&2
         ;;
+
       *)
         echo "!!! Unknown OS: $os" >&2
         exit 5
@@ -28,7 +65,7 @@ case "$(echo $@ | xargs echo -n)" in
     ;;
 
   *)
-    echo "!!! Unknown arguments: $@" >&2
+    echo "!!! Unknown arguments: $ORIGINAL_ARGS" >&2
     exit 1
     ;;
 

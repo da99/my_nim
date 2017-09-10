@@ -16,6 +16,12 @@ PATH="$PATH:$THIS_DIR/../my_os/bin"
 PATH="$PATH:$THIS_DIR/../sh_color/bin"
 PATH="$PATH:$THIS_DIR/../process/bin"
 
+if [[ -f "$THIS_DIR/nim.version" ]]; then
+  local +x NIM_VERSION="$(cat "$THIS_DIR/nim.version")"
+  local +x NIM_BIN="$THIS_DIR/tmp/$NIM_VERSION/bin"
+  PATH="$NIM_BIN:$PATH"
+fi
+
 case $ACTION in
 
   help|--help|-h)
@@ -30,14 +36,15 @@ case $ACTION in
       exit 0
     fi
 
-    if [[ -f "$THIS_DIR/progs/bin/$ACTION" ]]; then
-      export PATH="$THIS_DIR/progs/bin:$PATH"
-      "$THIS_DIR"/progs/bin/$ACTION "$@"
+    # Is it in the nim bin?
+    if [[ -x "$NIM_BIN/$ACTION" ]]; then
+      "$NIM_BIN/$ACTION" $@
       exit 0
     fi
 
     # === It's an error:
-    nim $ACTION "$@"
+    echo "!!! Unknow args: $ACTION $@" >&2
+    exit 1
     ;;
 
 esac
