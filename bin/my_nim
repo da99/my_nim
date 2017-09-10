@@ -42,6 +42,13 @@ case $ACTION in
       exit 0
     fi
 
+    # Is it in the nim source dir?
+    if [[ -x "$NIM_BIN/../$ACTION" ]]; then
+      cd "$NIM_BIN"/..
+      ./$ACTION $@
+      exit 0
+    fi
+
     # === It's an error:
     echo "!!! Unknow args: $ACTION $@" >&2
     exit 1
