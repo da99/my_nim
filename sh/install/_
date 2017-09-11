@@ -56,11 +56,10 @@ case "$(echo $@ | xargs echo -n)" in
         sh_color GREEN "=== Installed: $nim_dir" >&2
         sh_color GREEN "=== PATH: $full_nim_dir/bin" >&2
 
-        # Delete unnecessary dirs that take up lots of space:
         cd "$full_nim_dir"
-        for fs in $(find . -maxdepth 1 -mindepth 1 -type d -and -not -name bin); do
-          rm -rf "$fs"
-        done
+
+        # Delete unnecessary dirs that take up lots of space:
+        rm -rf c_code
         ;;
 
       *)

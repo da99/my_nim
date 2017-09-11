@@ -17,7 +17,7 @@ case "$ACTION" in
     ;;
 
   run)
-    nim compile --cc:clang --out:tmp/scratch.run --nimcache:"$nimcache" tmp/scratch/scratch.nim
+    nim compile --cc:gcc --out:tmp/scratch.run --nimcache:"$nimcache" tmp/scratch/scratch.nim
     sh_color GREEN "BOLD{{=============================================================================}}"
     tmp/scratch.run
     sh_color GREEN "BOLD{{===}} BOLD{{$(date +"%I:%M:%S")}} GREEN{{================================================================}}"
