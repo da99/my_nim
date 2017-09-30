@@ -17,8 +17,23 @@ case "$ACTION" in
     ;;
 
   run)
-    nim compile --cc:gcc --out:tmp/scratch.run --nimcache:"$nimcache" tmp/scratch/scratch.nim
+    rm -rf "$nimcache"
+    # --passC:-fsanitize=undefined \
+      # -d:release \
+    nim compile \
+      -d:safe \
+      --verbosity:2 \
+      --passC:-Wall \
+      --passC:-Wextra \
+      --passC:-fsanitize-undefined-trap-on-error \
+      --passC:-fsanitize=null \
+      --cc:clang  \
+      --out:tmp/scratch.run \
+      --nimcache:"$nimcache" \
+      tmp/scratch/scratch.nim
+
     sh_color GREEN "BOLD{{=============================================================================}}"
+    ls -hal tmp/scratch.run
     tmp/scratch.run
     sh_color GREEN "BOLD{{===}} BOLD{{$(date +"%I:%M:%S")}} GREEN{{================================================================}}"
     ;;
